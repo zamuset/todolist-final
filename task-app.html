@@ -1,0 +1,64 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="task-input.html">
+<link rel="import" href="task-filter.html">
+<link rel="import" href="task-list.html">
+<dom-module id="task-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 50%;
+        margin: 0 auto;
+      }
+
+      .content {
+        text-align: center;
+        width: 50%;
+        margin: 0 auto;
+      }
+
+      h2 {
+        text-align: center;
+      }
+    </style>
+    <div class="content">
+      <h2>TODO LIST</h2>
+      <task-input on-added-task="_addTask"></task-input>
+      <task-filter filter={{filter}} on-filter-change="_updateFilter"></task-filter>
+      <task-list filter={{filter}} tasks=[[tasksList]]></task-list>
+    </div>
+  </template>
+  <script>
+    class TaskApp extends Polymer.Element {
+      static get is() {
+        return 'task-app'
+      }
+      static get properties() {
+        return {
+          filter: {
+            type: String,
+            value: '',
+            notify: true
+          },
+          tasksList: {
+            type: Array,
+            value: [],
+            readOnly: true,
+            notify: true
+          }
+        }
+      }
+      _updateFilter(event) {
+        console.log("event", event.detail)
+        this.set('filter', event.detail)
+        this.notifyPath('filter', event.detail)
+      }
+      _addTask(event) {
+        event.stopPropagation()
+        this.push('tasksList', event.detail)
+        // this.notifyPath('tasksList', this.tasksList)
+      }
+    }
+    customElements.define(TaskApp.is, TaskApp);
+  </script>
+</dom-module>

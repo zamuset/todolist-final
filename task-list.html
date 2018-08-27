@@ -1,0 +1,69 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/polymer/lib/elements/dom-repeat.html">
+<dom-module id="task-list">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      .container {
+        display: block;
+        padding: 5px;
+      }
+
+      input[type=checkbox]+label {
+        color: red;
+        font-style: italic;
+      }
+
+      input[type=checkbox]:checked+label {
+        color: black;
+        font-style: normal;
+      }
+    </style>
+    <template is="dom-repeat" items="{{tasks}}" filter="{{_taskFilter(filter)}}">
+      <div class="container">
+        <input id="taskCheck[[index]]" type="checkbox" on-change="_checkTask">
+        <label id="taskName">[[item.title]]</label>
+        <br>
+      </div>
+    </template>
+  </template>
+  <script>
+    class TaskList extends Polymer.Element {
+      static get is() {
+        return "task-list"
+      }
+      static properties() {
+        return {
+          tasks: {
+            type: Array,
+            notify: true
+          },
+          filter: {
+            type: String,
+            value: ""
+          }
+        }
+      }
+      _taskFilter(filter) {
+        console.log("filter here", filter)
+        console.log("filter here2", this.tasks)
+        if (!filter) {
+          return null
+        }
+        return function (tasks) {
+          return tasks.title.indexOf(filter) > -1
+        }
+      }
+      _checkTask(event) {
+        const index = event.model.__data.index
+        this.set('tasks.' + index + '.completed', true)
+        console.log("after", this.tasks)
+        this.shadowRoot.querySelector('#taskCheck' + index).disabled = true
+      }
+    }
+    customElements.define(TaskList.is, TaskList)
+  </script>
+</dom-module>

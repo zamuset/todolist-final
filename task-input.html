@@ -1,0 +1,49 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<dom-module id="task-input">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding: 10px;
+      }
+    </style>
+    <h2>Add a new task!</h2><br>
+    <input type="text" id="task" placeholder="some task" on-input="_taskChanged"><br><br>
+    <button type="submit" on-click="_addTask">Add task</button>
+  </template>
+  <script>
+    class TaskInput extends Polymer.Element {
+      static get is() {
+        return "task-input"
+      }
+      static properties() {
+        return {
+          taskName: {
+            type: String,
+            value: ""
+          }
+        }
+      }
+
+      _taskChanged(event){
+        this.taskName = event.target.value
+      }
+      _addTask(event) {
+        if (!this.taskName) {
+          console.log("return")
+          return
+        } 
+        const addTask = new CustomEvent('added-task', {
+          detail: {
+            title: this.taskName, 
+            completed: false
+          }
+        })
+        this.dispatchEvent(addTask)
+        this.$.task.value = ""
+        this.taskName = ""
+      }
+    }
+    customElements.define(TaskInput.is, TaskInput)
+  </script>
+</dom-module>
